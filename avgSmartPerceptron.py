@@ -1,8 +1,8 @@
 import numpy as np
 import time
 import matplotlib.pyplot as plt
-from featuresNormalized import BinarizeData
-from Dev_Evaluator import DevEvaluator
+from featuresBinarized import BinarizeData
+from errorEvaluator import errorEvaluator
 
 ## Averaged, smart perceptron algorithm for binary classification
 ## of individuals earning less than or more than 50K/year.
@@ -28,7 +28,7 @@ while epochCount < totalEpoch:
 
         if currentTrainingCount % 1000 == 0:
 
-            devError = DevEvaluator(weightVector - (weightVectorAveraged / currentTrainingCount), \
+            devError = errorEvaluator(weightVector - (weightVectorAveraged / currentTrainingCount), \
                                     devDataArray)
 
             epochFraction = (i / numberTrainingData) + epochCount
