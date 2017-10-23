@@ -3,7 +3,7 @@ import numpy as np
 ## Test current Perceptron on developer data and report
 ## the error rate.
 
-def DevEvaluator(weightVector, devDataArray):
+def errorEvaluator(weightVector, devDataArray):
 
     numberDevData = len(devDataArray)
     devWrong = 0

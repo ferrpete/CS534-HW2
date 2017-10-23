@@ -2,14 +2,14 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 from featuresBinarized import BinarizeData
-from Dev_Evaluator import DevEvaluator
+from errorEvaluator import errorEvaluator
 
 ## Averaged, smart, a-MIRA algorithm for binary classification
 ## of individuals earning less than or more than 50K/year.
 
 trainDataArray, devDataArray, testDataArray, featureArray = BinarizeData(sort=0, shuffle=0)
 
-p = 1.0
+p = 0.9
 
 weightVector = np.zeros((len(featureArray)))
 weightVectorAveraged = np.zeros((len(featureArray)))
@@ -31,9 +31,9 @@ while epochCount < totalEpoch:
 
     for i in range(0, numberTrainingData):
 
-        if currentTrainingCount % 1000 == 0:
+        if currentTrainingCount % 100 == 0:
 
-            devError = DevEvaluator(weightVector - (weightVectorAveraged / currentTrainingCount), \
+            devError = errorEvaluator(weightVector - (weightVectorAveraged / currentTrainingCount), \
                                     devDataArray)
 
             epochFraction = (i / numberTrainingData) + epochCount
@@ -68,8 +68,8 @@ while epochCount < totalEpoch:
             weightVectorAveraged = weightVectorAveraged + \
             currentTrainingCount * marginCorrection * xi
 
-##            check = y * (np.dot(weightVector, xi))
-##            print(check)
+            check = y * (np.dot(weightVector, xi))
+            print(check)
 
         currentTrainingCount += 1
 
