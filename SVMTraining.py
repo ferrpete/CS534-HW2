@@ -7,7 +7,7 @@ import HW1Reference
 ## Utilize sklearn's SVM program to classify individuals earning less
 ## or more than 50K/year.
 
-def SVM_fit(train_data, _kernel='linear', _degree=1, cParam = 1):
+def SVM_fit(train_data, cParam = 1, _kernel='linear', _degree=1):
 
     featureData = []
     target = []
@@ -96,12 +96,14 @@ if __name__ == "__main__":
     train_data = HW1Reference.map_data(train_file, feature2index)
     dev_data = HW1Reference.map_data(dev_file, feature2index)
 
-    cParam = 1
+    while True:
 
-    clf = SVM_fit(train_data, cParam)
-    test('training', train_data, clf.coef_, clf.intercept_, cParam)
-    test('dev', dev_data, clf.coef_, clf.intercept_, cParam)
-    
-    margin_violation(clf, cParam)
-    objective_function(clf.coef_, clf.intercept_, train_data, cParam)
-    most_violated(clf.coef_, clf.intercept_, train_data, feature2index)
+        cParam = int(input("c Parameter > "))
+
+        clf = SVM_fit(train_data, cParam)
+        test('training', train_data, clf.coef_, clf.intercept_, cParam)
+        test('dev', dev_data, clf.coef_, clf.intercept_, cParam)
+        
+        margin_violation(clf, cParam)
+        objective_function(clf.coef_, clf.intercept_, train_data, cParam)
+        most_violated(clf.coef_, clf.intercept_, train_data, feature2index)
