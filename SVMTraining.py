@@ -7,7 +7,7 @@ import HW1Reference
 ## Utilize sklearn's SVM program to classify individuals earning less
 ## or more than 50K/year.
 
-def SVM_fit(train_data, cParam = 1):
+def SVM_fit(train_data, _kernel='linear', _degree=1, cParam = 1):
 
     featureData = []
     target = []
@@ -16,7 +16,7 @@ def SVM_fit(train_data, cParam = 1):
         featureData.append(vecx[1::]) ## Omit bias
         target.append(y)
 
-    clf = svm.SVC(kernel = 'linear', C = cParam)
+    clf = svm.SVC(kernel = _kernel, degree = _degree, C = cParam)
 
     startTime = time.time()
     clf.fit(featureData, target)
