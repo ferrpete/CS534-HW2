@@ -93,16 +93,27 @@ if __name__ == "__main__":
     train_file, dev_file = "income-data/income.train.txt.5k", "income-data/income.dev.txt"
 
     feature2index = HW1Reference.create_feature_map(train_file)
-    train_data = HW1Reference.map_data(train_file, feature2index)
-    dev_data = HW1Reference.map_data(dev_file, feature2index)
+    train_data, train_target = HW1Reference.map_data(train_file, feature2index)
+    dev_data, dev_target = HW1Reference.map_data(dev_file, feature2index)
+
+    _kernel = int(input("Kernel [1: linear | 2:poly] > "))
+    kernel = 'linear'
+    degree = 1
+    if _kernel == 2:
+        kernel = 'poly'
+        degree = 2
 
     while True:
 
-        cParam = int(input("c Parameter > "))
+        cParam = float(input("c Parameter > "))
 
-        clf = SVM_fit(train_data, cParam)
-        test('training', train_data, clf.coef_, clf.intercept_, cParam)
-        test('dev', dev_data, clf.coef_, clf.intercept_, cParam)
+        clf = SVM_fit(train_data, cParam, kernel, degree)
+        test = clf.predict(train_data)
+        dev = clf.predict(dev_data)
+        test_result = numpy.equal(test, train_target)
+        dev_result = numpy.equal(dev, dev_target)
+ #       test('training', train_data, clf.coef_, clf.intercept_, cParam)
+ #       test('dev', dev_data, clf.coef_, clf.intercept_, cParam)
         
         margin_violation(clf, cParam)
         objective_function(clf.coef_, clf.intercept_, train_data, cParam)
