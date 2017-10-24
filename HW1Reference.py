@@ -33,7 +33,7 @@ def train(train_data, dev_data, it=1, MIRA=False, check_freq=1000, aggressive=0.
     t = time.time()
     for i in range(1, it+1):
         print ("starting epoch", i)
-        for j, (vecx, y) in enumerate(train_data, 1):
+        for j, (vecx, y) in enumerate(train_data):
             s = model.dot(vecx)
             if not MIRA: # perceptron
                 if s * y <= 0:
