@@ -16,7 +16,6 @@ def map_data(filename, feature2index):
         for i, fv in enumerate(features[:-1]): # last one is target
             if (i, fv) in feature2index: # ignore unobserved features
                 feat_vec[feature2index[i, fv]] = 1
-        feat_vec[0] = 1 # bias
 
         data.append(feat_vec)
         
@@ -38,7 +37,7 @@ def create_feature_map(train_file):
         for i, fv in enumerate(features):
             column_values[i].add(fv)
 
-    feature2index = {(-1, 0): 0} # bias
+    feature2index = {}
     for i, values in column_values.items():
         for v in values:            
             feature2index[i, v] = len(feature2index)
