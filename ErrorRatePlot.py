@@ -27,7 +27,7 @@ for i in range(len(cParam)):
 
 plt.plot(cParam, train_error, 'r-', cParam, dev_error, 'k--')
 plt.legend(('Training Set', 'Dev Set'))
-plt.axis([0, 10, 10, 20])
+plt.axis([0, 10, 15, 18])
 plt.xlabel('Penalty Parameter, C')
 plt.ylabel('Error Rate, %')
 plt.show()
