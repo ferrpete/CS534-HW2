@@ -61,8 +61,7 @@ def most_violated(model, bias, train_data, target, feature2index):
     i = 0
     j = 0
     while i < 6:
-        train_data[violations[j]][1]
-        if target[j] == 1:
+        if target[violations[j]] == 1:
             positiveViolation.append(violations[j])
             i += 1
         j += 1
@@ -71,7 +70,7 @@ def most_violated(model, bias, train_data, target, feature2index):
     i = 0
     j = 0
     while i < 6:
-        if target[j] == -1:
+        if target[violations[j]] == -1:
             negativeViolation.append(violations[j])
             i += 1
         j += 1
