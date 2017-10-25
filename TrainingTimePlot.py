@@ -19,7 +19,14 @@ for i in range(len(trainingExamples)):
     
     print("End of run with examples = " + str(trainingExamples[i]))
 
-plt.plot(trainingExamples, trainingTime)
+z = np.polyfit(trainingExamples, trainingTime, 2)
+f = np.poly1d(z)
+
+x_new = np.linspace(trainingExamples[0], trainingExamples[-1], 50)
+y_new = f(x_new)
+
+plt.plot(trainingExamples, trainingTime, 'rx', label='data')
+plt.plot(x_new, y_new, 'b-', label='fit')
 plt.axis([0, 5000, 0, 4])
 plt.xlabel('Number of Training Examples')
 plt.ylabel('Training Time')
