@@ -7,9 +7,9 @@ import DataProcessor
 ## Utilize sklearn's SVM program to classify individuals earning less
 ## or more than 50K/year.
 
-def SVM_fit(train_data, train_target, cParam = 1, _kernel='linear', _degree=1):
+def SVM_fit(train_data, train_target, cParam = 1, _kernel='linear', _degree=1, _coef0=0):
 
-    clf = svm.SVC(kernel = _kernel, degree = _degree, C = cParam)
+    clf = svm.SVC(kernel = _kernel, degree = _degree, C = cParam, coef0 = _coef0)
 
     startTime = time.time()
     clf.fit(train_data, train_target)
@@ -24,15 +24,15 @@ def test(dataSet, data, model, bias, cParam = 1):
 
     print("The", dataSet, "error rate is {:.2%} for C = {:.2f}".format(error_rate[0], cParam))
 
-def margin_violation(clf, cParam = 1):
+def margin_violation(model, bias, support_vectors, target, cParam = 1):
 
     marginViolation = 0
 
-    for i, dual in enumerate(clf.dual_coef_[0]):
-        if abs(dual) == cParam:
+    for i, vecx in enumerate(support_vectors):
+        if 1 - target[i] * (model.dot(vecx) + bias) > 0:
             marginViolation += 1
 
-    print("The number of support vectors with margin violations is: {:.2f}".format(marginViolation))
+    print("The number of support vectors with margin violations is: {:.0f}".format(marginViolation))
 
 def objective_function(model, bias, train_data, target, cParam = 1):
     totalSlack = 0
@@ -43,7 +43,7 @@ def objective_function(model, bias, train_data, target, cParam = 1):
         
     objective = 0.5 * (model.dot(model.T) + bias * bias) + cParam * totalSlack
 
-    print("The total amount of margin violation is: {:.2f}".format(totalSlack[0]))
+    print("The total slack is: {:.2f}".format(totalSlack[0]))
     print("The minimized objective function value is {:.2f}".format(objective[0][0]))
 
 def most_violated(model, bias, train_data, target, feature2index):
@@ -89,26 +89,31 @@ if __name__ == "__main__":
     train_data, train_target = DataProcessor.map_data(train_file, feature2index)
     dev_data, dev_target = DataProcessor.map_data(dev_file, feature2index)
 
-    _kernel = int(input("Kernel [1: linear | 2:poly] > "))
+    _kernel = int(input("Kernel [1: linear | 2: quadratic] > "))
     kernel = 'linear'
     degree = 1
+    coef0 = 0
     if _kernel == 2:
         kernel = 'poly'
         degree = 2
+        coef0 = 1
 
     while True:
 
         cParam = float(input("c Parameter > "))
 
-        clf = SVM_fit(train_data, train_target, cParam, kernel, degree)
-        test = clf.predict(train_data)
-        dev = clf.predict(dev_data)
-        test_result = np.equal(test, train_target)
-        dev_result = np.equal(dev, dev_target)
-        print(str(dev_result))
- #       test('training', train_data, clf.coef_, clf.intercept_, cParam)
- #       test('dev', dev_data, clf.coef_, clf.intercept_, cParam)
+        clf = SVM_fit(train_data, train_target, cParam, kernel, degree, coef0)
+        train_predict = clf.predict(train_data)
+        dev_predict = clf.predict(dev_data)
+        train_result = np.not_equal(train_predict, train_target)
+        train_error = train_result.sum()/len(train_result)
+        print("The training error rate is {:.2%} for C = {:.2f}".format(train_error, cParam))
         
-        margin_violation(clf, cParam)
-        objective_function(clf.coef_, clf.intercept_, train_data, train_target, cParam)
-        most_violated(clf.coef_, clf.intercept_, train_data, train_target, feature2index)
+        dev_result = np.not_equal(dev_predict, dev_target)
+        dev_error = dev_result.sum()/len(dev_result)
+        print("The dev error rate is {:.2%} for C = {:.2f}".format(dev_error, cParam))
+
+        if _kernel == 1:
+            margin_violation(clf.coef_, clf.intercept_, clf.support_vectors_, train_target, cParam)
+            objective_function(clf.coef_, clf.intercept_, train_data, train_target, cParam)
+            most_violated(clf.coef_, clf.intercept_, train_data, train_target, feature2index)
