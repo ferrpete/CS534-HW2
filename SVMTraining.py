@@ -1,22 +1,22 @@
 import numpy as np
 import time
-import matplotlib.pyplot as plt
 from sklearn import svm
 import DataProcessor
 
 ## Utilize sklearn's SVM program to classify individuals earning less
 ## or more than 50K/year.
 
-def SVM_fit(train_data, train_target, cParam = 1, _kernel='linear', _degree=1, _coef0=0):
+def SVM_fit(data, target, cParam = 1, _kernel='linear', _degree=1, _coef0=0):
 
     clf = svm.SVC(kernel = _kernel, degree = _degree, C = cParam, coef0 = _coef0)
 
     startTime = time.time()
-    clf.fit(train_data, train_target)
-    print("The SVM ran for %s seconds" % (time.time() - startTime))
+    clf.fit(data, target)
+    endTime = time.time()
+    print("The SVM ran for %s seconds" % (endTime - startTime))
     print("The number of support vectors are: ", str(len(clf.support_vectors_)))
 
-    return clf
+    return clf, (endTime - startTime)
 
 def test(dataSet, data, model, bias, cParam = 1):
     errors = sum(y * (model.dot(vecx) + bias) <= 0 for vecx, y in data)
@@ -102,15 +102,13 @@ if __name__ == "__main__":
 
         cParam = float(input("c Parameter > "))
 
-        clf = SVM_fit(train_data, train_target, cParam, kernel, degree, coef0)
-        train_predict = clf.predict(train_data)
-        dev_predict = clf.predict(dev_data)
-        train_result = np.not_equal(train_predict, train_target)
-        train_error = train_result.sum()/len(train_result)
+        clf, _ = SVM_fit(train_data, train_target, cParam, kernel, degree, coef0)
+        train_predict = clf.score(train_data, train_target)
+        dev_predict = clf.score(dev_data, dev_target)
+        train_error = 1 - train_predict
         print("The training error rate is {:.2%} for C = {:.2f}".format(train_error, cParam))
         
-        dev_result = np.not_equal(dev_predict, dev_target)
-        dev_error = dev_result.sum()/len(dev_result)
+        dev_error = 1 - dev_predict
         print("The dev error rate is {:.2%} for C = {:.2f}".format(dev_error, cParam))
 
         if _kernel == 1:
