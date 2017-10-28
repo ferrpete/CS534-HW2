@@ -83,10 +83,13 @@ def most_violated(model, bias, train_data, target, feature2index):
     
 if __name__ == "__main__":
     train_file, dev_file = "income-data/income.train.txt.5k", "income-data/income.dev.txt"
+    test_file = "income-data/income.test.txt"
 
     feature2index = DataProcessor.create_feature_map(train_file)
     train_data, train_target = DataProcessor.map_data(train_file, feature2index)
     dev_data, dev_target = DataProcessor.map_data(dev_file, feature2index)
+    test_data = DataProcessor.test_data(test_file, feature2index)
+    
 
     _kernel = int(input("Kernel [1: linear | 2: quadratic] > "))
     kernel = 'linear'

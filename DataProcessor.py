@@ -28,6 +28,22 @@ def map_data(filename, feature2index):
 
     return data, target
 
+def test_data(filename, feature2index):
+    data = [] # list of (vecx, y) pairs
+    target = []
+    dimension = len(feature2index)
+    for j, line in enumerate(open(filename)):
+        line = line.strip()
+        features = line.split(", ")
+        feat_vec = np.zeros(dimension)
+        for i, fv in enumerate(features[:-1]): # last one is target
+            if (i, fv) in feature2index: # ignore unobserved features
+                feat_vec[feature2index[i, fv]] = 1
+
+        data.append(feat_vec)
+
+    return data
+
 def create_feature_map(train_file):
 
     column_values = defaultdict(set)
