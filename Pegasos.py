@@ -34,7 +34,7 @@ def Pegasos(data, target, devData, devTarget):
     lambdaVar = 2 / (nCount * cParam)
     currentTrainingCount = 1
     epochCount = 1
-    totalEpoch = 250
+    totalEpoch = 150
 ##    supportVectors = 0
     startTime = time.time()
     objective = []
@@ -61,8 +61,7 @@ def Pegasos(data, target, devData, devTarget):
               
               currentTrainingCount += 1
 
-          endTime = time.time()       
-          epochCount += 1
+          endTime = time.time() 
 
           trainError = DevError(weightVector, bias, data, target)
           devError = DevError(weightVector, bias, devData, devTarget)
@@ -78,7 +77,9 @@ def Pegasos(data, target, devData, devTarget):
           objective.append(objective_function(weightVector, bias, data, target, lambdaVar, cParam))
           train_Error.append(100 * trainError)
           dev_Error.append(100 * devError)
-          epoch.append(epochCount - 1)
+          epoch.append(epochCount)
+
+          epochCount += 1
     
     return weightVector, objective, train_Error, dev_Error, epoch
 
@@ -113,13 +114,13 @@ if __name__ == "__main__":
 
     plt.plot(epoch, trainError, 'r-', epoch, devError, 'k-')
     plt.legend(('Training Set', 'Dev Set'))
-    plt.axis([0, 250, 15, 25])
+    plt.axis([0, len(epoch), 15, 25])
     plt.xlabel('Epoch')
     plt.ylabel('Error Rate, %')
     plt.show()
 
     plt.plot(epoch, objective, 'k-')
-    plt.axis([0, 250, 0.3, 1])
+    plt.axis([0, len(epoch), 0.3, 1])
     plt.xlabel('Epoch')
     plt.ylabel('Objective Function')
     plt.show()
