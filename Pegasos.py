@@ -31,7 +31,7 @@ def Pegasos(data, target, devData, devTarget):
     weightVector = np.zeros(len(train_data[0]))
     bias = 0
     cParam = 1
-    lambdaVar = 1 / (nCount * cParam)
+    lambdaVar = 2 / (nCount * cParam)
     currentTrainingCount = 1
     epochCount = 1
     totalEpoch = 250
@@ -75,23 +75,24 @@ def Pegasos(data, target, devData, devTarget):
 
 ##          print(str(supportVectors))
 
-          objective.append(objective_function(weightVector, bias, data, target, cParam))
+          objective.append(objective_function(weightVector, bias, data, target, lambdaVar, cParam))
           train_Error.append(100 * trainError)
           dev_Error.append(100 * devError)
           epoch.append(epochCount - 1)
     
     return weightVector, objective, train_Error, dev_Error, epoch
 
-def objective_function(model, bias, train_data, target, cParam = 1):
+def objective_function(model, bias, train_data, target, lambdaVar, cParam = 1):
     totalSlack = 0
+    N = len(train_data)
     for j in range(len(train_data)):
         slack = 1 - target[j] * (model.dot(train_data[j]) + bias)
         if slack > 0:
             totalSlack += slack
         
-    objective = 0.5 * (model.dot(model.T) + bias * bias) + cParam * totalSlack
+    objective = 0.5 * lambdaVar * (model.dot(model.T) + bias * bias) + (1 / N) * totalSlack
 
-    print("The minimized objective function value is {:.2f}".format(objective))
+    print("The minimized objective function value is {:.5f}".format(objective))
     return objective
 
 def test(dataSet, data, model, bias, cParam = 1):
@@ -118,7 +119,7 @@ if __name__ == "__main__":
     plt.show()
 
     plt.plot(epoch, objective, 'k-')
-    plt.axis([0, 250, 1800, 6000])
+    plt.axis([0, 250, 0.3, 1])
     plt.xlabel('Epoch')
     plt.ylabel('Objective Function')
     plt.show()
