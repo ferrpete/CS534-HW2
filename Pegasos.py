@@ -34,8 +34,8 @@ def Pegasos(data, target, devData, devTarget):
     lambdaVar = 2 / (nCount * cParam)
     currentTrainingCount = 1
     epochCount = 1
-    totalEpoch = 150
-##    supportVectors = 0
+    totalEpoch = 10
+    supportVectors = np.zeros(len(train_data))
     startTime = time.time()
     objective = []
     train_Error = []
@@ -53,7 +53,9 @@ def Pegasos(data, target, devData, devTarget):
 
                   weightVector = weightVector - learningRate * (lambdaVar * weightVector - target[i] * data[i])
                   bias = bias - learningRate * (lambdaVar * bias - target[i])
-##                  supportVectors += 1
+
+                  if supportVectors[i] == 0:
+                          supportVectors[i] = 1
 
               else:
                   weightVector = weightVector - learningRate * lambdaVar * weightVector
@@ -72,18 +74,18 @@ def Pegasos(data, target, devData, devTarget):
       
           print("The Pegasos ran for {:.2f} seconds".format((endTime - startTime)))
 
-##          print(str(supportVectors))
-
-          objective.append(objective_function(weightVector, bias, data, target, lambdaVar, cParam))
+          objective.append(objective_function(weightVector, bias, data, target, cParam))
           train_Error.append(100 * trainError)
           dev_Error.append(100 * devError)
           epoch.append(epochCount)
 
           epochCount += 1
+
+    print("Number of support vectors was {:1f}".format(supportVectors.sum()))
     
     return weightVector, objective, train_Error, dev_Error, epoch
 
-def objective_function(model, bias, train_data, target, lambdaVar, cParam = 1):
+def objective_function(model, bias, train_data, target, cParam = 1):
     totalSlack = 0
     N = len(train_data)
     for j in range(len(train_data)):
@@ -91,7 +93,7 @@ def objective_function(model, bias, train_data, target, lambdaVar, cParam = 1):
         if slack > 0:
             totalSlack += slack
         
-    objective = 0.5 * lambdaVar * (model.dot(model.T) + bias * bias) + (1 / N) * totalSlack
+    objective = 0.5 * (model.dot(model.T) + bias * bias) + totalSlack
 
     print("The minimized objective function value is {:.5f}".format(objective))
     return objective
@@ -120,7 +122,7 @@ if __name__ == "__main__":
     plt.show()
 
     plt.plot(epoch, objective, 'k-')
-    plt.axis([0, len(epoch), 0.3, 1])
+    plt.axis([0, len(epoch), 1800, 4000])
     plt.xlabel('Epoch')
     plt.ylabel('Objective Function')
     plt.show()
